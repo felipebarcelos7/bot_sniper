@@ -1,160 +1,91 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QComboBox, QTextEdit, QCheckBox, QSpinBox
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget,
+                             QHBoxLayout, QComboBox, QTextEdit, QCheckBox, QSpinBox, QGridLayout)
 from PyQt5.QtCore import Qt
-from web3 import Web3
 
 class TradingBotApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.w3 = Web3(Web3.HTTPProvider("https://bsc-dataseed.binance.org/"))
-
-        if self.w3.is_connected():
-            self.log_area.append("Conectado à blockchain!")
-        else:
-            self.log_area.append("Falha ao conectar à blockchain.")
 
     def initUI(self):
         self.setWindowTitle('Sniper Trading Bot')
-        self.setGeometry(100, 100, 1000, 700)
-
-        # Aplicando estilo QSS para toda a janela
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #1e1e1e;
-                color: #c0c0c0;
-                font-family: Arial;
-            }
-            QLabel {
-                font-size: 14px;
-            }
-            QLineEdit, QComboBox, QSpinBox {
-                background-color: #333;
-                border: 1px solid #555;
-                border-radius: 5px;
-                padding: 5px;
-                color: #c0c0c0;
-            }
-            QPushButton {
-                background-color: #3a3a3a;
-                border: 1px solid #555;
-                border-radius: 5px;
-                padding: 5px;
-                color: #c0c0c0;
-            }
-            QPushButton:hover {
-                background-color: #505050;
-            }
-            QTextEdit {
-                background-color: #282828;
-                border: 1px solid #555;
-                color: #c0c0c0;
-            }
-        """)
+        self.setGeometry(100, 100, 1200, 800)
 
         # Layout principal
-        main_layout = QVBoxLayout()
+        main_layout = QGridLayout()
 
-        # Linha superior com token e DEX
-        top_layout = QHBoxLayout()
-        self.token_addr_label = QLabel('Token Addr:')
-        self.token_addr_input = QLineEdit(self)
-        self.dex_selector = QComboBox(self)
-        self.dex_selector.addItems(["PancakeSwap V2", "Uniswap V2", "SushiSwap", "Arbitrum", "TraderJoe V2"])
+        # Linha 1: Endereço do Token e DEX
+        token_addr_label = QLabel('Token Addr:')
+        token_addr_input = QLineEdit()
+        token_addr_input.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        top_layout.addWidget(self.token_addr_label)
-        top_layout.addWidget(self.token_addr_input)
-        top_layout.addWidget(self.dex_selector)
+        dex_label = QLabel('DEX:')
+        dex_selector = QComboBox()
+        dex_selector.addItems(["PancakeSwap V2", "Uniswap V2", "SushiSwap", "Arbitrum", "TraderJoe V2"])
+        dex_selector.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        main_layout.addLayout(top_layout)
+        main_layout.addWidget(token_addr_label, 0, 0)
+        main_layout.addWidget(token_addr_input, 0, 1, 1, 3)
+        main_layout.addWidget(dex_label, 0, 4)
+        main_layout.addWidget(dex_selector, 0, 5)
 
-        # Configurações de slippage e Gwei
-        config_layout = QHBoxLayout()
-        self.slippage_label = QLabel('Slippage %:')
-        self.slippage_input = QSpinBox(self)
-        self.slippage_input.setRange(0, 100)
-        self.slippage_input.setValue(5)
+        # Linha 2: Campos de Configurações (Gwei, Slippage, etc.)
+        gwei_label = QLabel('GWEI to trade:')
+        gwei_input = QSpinBox()
+        gwei_input.setRange(0, 1000)
+        gwei_input.setValue(25)
+        gwei_input.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        self.gwei_label = QLabel('Gwei:')
-        self.gwei_input = QSpinBox(self)
-        self.gwei_input.setRange(0, 500)
-        self.gwei_input.setValue(5)
+        buy_slippage_label = QLabel('Buy slippage %:')
+        buy_slippage_input = QSpinBox()
+        buy_slippage_input.setRange(0, 100)
+        buy_slippage_input.setValue(10)
+        buy_slippage_input.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        config_layout.addWidget(self.slippage_label)
-        config_layout.addWidget(self.slippage_input)
-        config_layout.addWidget(self.gwei_label)
-        config_layout.addWidget(self.gwei_input)
+        main_layout.addWidget(gwei_label, 1, 0)
+        main_layout.addWidget(gwei_input, 1, 1)
+        main_layout.addWidget(buy_slippage_label, 1, 2)
+        main_layout.addWidget(buy_slippage_input, 1, 3)
 
-        main_layout.addLayout(config_layout)
+        # Linha 3: Campos adicionais (taxa de compra, etc.)
+        sell_slippage_label = QLabel('Sell slippage %:')
+        sell_slippage_input = QSpinBox()
+        sell_slippage_input.setRange(0, 100)
+        sell_slippage_input.setValue(10)
+        sell_slippage_input.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        # Botões de ação
-        button_layout = QHBoxLayout()
-        self.buy_button = QPushButton('Buy Token')
-        self.sell_button = QPushButton('Sell Token')
+        max_buy_tax_label = QLabel('Max buy tax %:')
+        max_buy_tax_input = QSpinBox()
+        max_buy_tax_input.setRange(0, 100)
+        max_buy_tax_input.setValue(10)
+        max_buy_tax_input.setStyleSheet("background-color: #333; color: #FFF; border: 1px solid #555; padding: 5px;")
 
-        button_layout.addWidget(self.buy_button)
-        button_layout.addWidget(self.sell_button)
+        main_layout.addWidget(sell_slippage_label, 2, 0)
+        main_layout.addWidget(sell_slippage_input, 2, 1)
+        main_layout.addWidget(max_buy_tax_label, 2, 2)
+        main_layout.addWidget(max_buy_tax_input, 2, 3)
 
-        main_layout.addLayout(button_layout)
+        # Adicionando seções de botões (Start/Stop)
+        start_button = QPushButton('START')
+        stop_button = QPushButton('STOP')
+        start_button.setStyleSheet("background-color: #5cb85c; color: #FFF; border-radius: 5px; padding: 10px;")
+        stop_button.setStyleSheet("background-color: #d9534f; color: #FFF; border-radius: 5px; padding: 10px;")
 
-        # Área de log de transações
-        self.log_area = QTextEdit(self)
-        self.log_area.setReadOnly(True)
-        main_layout.addWidget(QLabel('Transaction Log:'))
-        main_layout.addWidget(self.log_area)
+        main_layout.addWidget(start_button, 3, 0)
+        main_layout.addWidget(stop_button, 3, 1)
+
+        # Adicionando área de log de transações
+        log_area = QTextEdit()
+        log_area.setReadOnly(True)
+        log_area.setStyleSheet("background-color: #222; color: #FFF; border: 1px solid #555; padding: 5px;")
+        main_layout.addWidget(log_area, 4, 0, 1, 6)
 
         # Configuração do container
         container = QWidget()
         container.setLayout(main_layout)
+        container.setStyleSheet("background-color: #1a1a1a;")
         self.setCentralWidget(container)
-
-        # Conectar os botões às funções
-        self.buy_button.clicked.connect(self.buy_token)
-        self.sell_button.clicked.connect(self.sell_token)
-
-    def buy_token(self):
-        token_address = self.token_addr_input.text()
-        slippage = self.slippage_input.value()
-        gwei = self.gwei_input.value()
-
-        if not token_address:
-            self.log_area.append('Erro: Por favor, insira o endereço do token.')
-            return
-
-        # Exemplo de log de transação
-        self.log_area.append(f'Iniciando a compra do token: {token_address}')
-        self.log_area.append(f'Slippage definido: {slippage}%')
-        self.log_area.append(f'Gas Price definido: {gwei} Gwei')
-
-        # Lógica para enviar a transação (adicionar lógica real aqui)
-        try:
-            # Transação simulada para fins de demonstração
-            tx_hash = '0x123abc...'  # Substituir pela chamada real de `web3.eth.sendTransaction()`
-            self.log_area.append(f'Transação enviada. Hash: {tx_hash}')
-        except Exception as e:
-            self.log_area.append(f'Erro ao enviar a transação: {e}')
-
-    def sell_token(self):
-        token_address = self.token_addr_input.text()
-        slippage = self.slippage_input.value()
-        gwei = self.gwei_input.value()
-
-        if not token_address:
-            self.log_area.append('Erro: Por favor, insira o endereço do token.')
-            return
-
-        # Exemplo de log de transação
-        self.log_area.append(f'Iniciando a venda do token: {token_address}')
-        self.log_area.append(f'Slippage definido: {slippage}%')
-        self.log_area.append(f'Gas Price definido: {gwei} Gwei')
-
-        # Lógica para enviar a transação (adicionar lógica real aqui)
-        try:
-            # Transação simulada para fins de demonstração
-            tx_hash = '0x456def...'  # Substituir pela chamada real de `web3.eth.sendTransaction()`
-            self.log_area.append(f'Transação enviada. Hash: {tx_hash}')
-        except Exception as e:
-            self.log_area.append(f'Erro ao enviar a transação: {e}')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
