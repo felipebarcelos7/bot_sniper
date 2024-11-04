@@ -5,8 +5,8 @@ import requests
 class CryptoTradingApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Crypto Trading App")
-        self.root.geometry("400x600")
+        self.root.title("Cripto e Afins Trading App")
+        self.root.geometry("800x600")
 
         # Campos de entrada
         self.create_input_fields()
