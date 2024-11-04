@@ -6,8 +6,8 @@ import json
 class CryptoTradingApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Crypto Trading App")
-        self.root.geometry("400x600")
+        self.root.title("Cripto e Afins Trading App")
+        self.root.geometry("800x600")  # Ajustando a dimensão da janela
         self.root.configure(bg="#2E2E2E")  # Cor de fundo
 
         # Estilo do ttk
@@ -18,12 +18,16 @@ class CryptoTradingApp:
         style.map("TButton", background=[("active", "#45A049")])  # Cor ao passar o mouse
         style.configure("TText", background="#3E3E3E", foreground="#FFFFFF", font=("Arial", 12))
 
+        # Frame principal para os campos de entrada
+        input_frame = ttk.Frame(self.root)
+        input_frame.pack(pady=10, padx=10, fill=tk.X)  # Ajustando preenchimento
+
         # Campos de entrada
-        self.create_input_fields()
+        self.create_input_fields(input_frame)
 
         # Botão de negociação
         self.trade_button = ttk.Button(self.root, text="Realizar Negociação", command=self.perform_trade)
-        self.trade_button.pack(pady=20)
+        self.trade_button.pack(pady=10)
 
         # Botão para limpar logs
         self.clear_log_button = ttk.Button(self.root, text="Limpar Log", command=self.clear_log)
@@ -34,7 +38,7 @@ class CryptoTradingApp:
         self.get_logs_button.pack(pady=5)
 
         # Área de texto para logs
-        self.log_area = tk.Text(self.root, height=15, width=50)
+        self.log_area = tk.Text(self.root, height=15, width=95)
         self.log_area.pack(pady=10)
 
         # Adicionando uma barra de rolagem
@@ -42,7 +46,7 @@ class CryptoTradingApp:
         self.scrollbar.pack(side="right", fill="y")
         self.log_area.config(yscrollcommand=self.scrollbar.set)
 
-    def create_input_fields(self):
+    def create_input_fields(self, frame):
         self.inputs = {}
         fields = [
             "Token Address", "Pay Coin", "GWEI to Trade", "Tip (GWEI)",
@@ -54,12 +58,12 @@ class CryptoTradingApp:
         ]
         
         for field in fields:
-            frame = ttk.Frame(self.root)
-            label = ttk.Label(frame, text=field)
-            entry = ttk.Entry(frame)
-            label.pack(side=tk.LEFT, padx=5)
-            entry.pack(side=tk.RIGHT, padx=5)
-            frame.pack(pady=5)
+            row = ttk.Frame(frame)
+            label = ttk.Label(row, text=field)
+            entry = ttk.Entry(row)
+            label.pack(side=tk.LEFT, padx=5, pady=5)
+            entry.pack(side=tk.RIGHT, padx=5, pady=5)
+            row.pack(fill=tk.X, padx=5, pady=5)
             self.inputs[field] = entry
 
     def perform_trade(self):
