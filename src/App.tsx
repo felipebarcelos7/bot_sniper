@@ -170,7 +170,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-4">
       <header className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-        <h1 className="text-xl font-bold">Sniper Bot</h1>
+        <h1 className="text-xl font-bold">Sniper Bot 4 Cripto Heads</h1>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">Current block: 26775489</span>
           <button className="bg-blue-600 px-3 py-1 rounded text-sm">Signatures</button>

@@ -1,6 +1,6 @@
 /*
-  # Initial Schema Setup for Sniper Bot
-
+  # Initial Schema Setup for Sniper Bot 4 c
+ripto Heads
   1. New Tables
     - `wallets` - Stores wallet configurations
       - `id` (uuid, primary key)
