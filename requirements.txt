@@ -1,6 +1,0 @@
-Flask
-web3
-flask_cors
-PyInstaller
-tkinter
-requests
